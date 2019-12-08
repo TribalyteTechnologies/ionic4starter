@@ -1,7 +1,7 @@
 FROM node:10-slim
 
 USER root
-RUN npm install -g live-server
+RUN npm install -g http-server
 
 USER node
 RUN mkdir -p /home/node/app /tmp/app
@@ -11,12 +11,11 @@ COPY --chown=node . .
 
 ENV NODE_OPTIONS=--max-old-space-size=500
 RUN echo "NodeJS $(node -v) memory config:" && node -p "v8.getHeapStatistics()"
-RUN npm i && npm run build && mv www /home/node/app && rm -fr /tmp/app
+RUN npm i
+RUN npm run build && mv www /home/node/app && rm -fr /tmp/app
 
 WORKDIR /home/node/app
 
-ENV IP=0.0.0.0 PORT=4200
+EXPOSE 8080
 
-EXPOSE ${PORT}
-
-CMD ["live-server", "--no-browser", "www"]
+CMD [ "http-server", "www" ]
